@@ -1,166 +1,314 @@
-# Spring Cloud Microservices - Eureka, Gateway & OpenFeign
+# Spring Cloud Microservices Architecture
+### Eureka Discovery • API Gateway • OpenFeign Communication
 
-Architecture microservices complète avec Spring Cloud incluant Eureka Server pour la découverte de services, Spring Cloud Gateway comme point d'entrée unique, et OpenFeign pour la communication inter-services.
+A complete microservices architecture demonstration using Spring Cloud ecosystem, featuring service discovery with Eureka Server, centralized routing through Spring Cloud Gateway, and inter-service communication via OpenFeign.
 
+---
 
-## Composants
+## Table of Contents
+- [Architecture Overview](#architecture-overview)
+- [Microservices Components](#microservices-components)
+- [Getting Started](#getting-started)
+- [API Documentation](#api-documentation)
+- [Testing Guide](#testing-guide)
+- [Monitoring & Management](#monitoring--management)
+- [Screenshots](#screenshots)
+- [Technology Stack](#technology-stack)
 
-### 1. Eureka Server (Port 8761)
-- Registre de découverte de services
-- Dashboard: http://localhost:8761
+---
 
-### 2. Service Client (Port 8088)
-- Microservice de gestion des clients
-- API REST CRUD pour les clients
-- Base H2 en mémoire
-- Endpoints:
-  - GET /clients - Liste tous les clients
-  - GET /client/{id} - Récupère un client par ID
-  - POST /client - Crée un nouveau client
-  - PUT /client/{id} - Met à jour un client
-  - DELETE /client/{id} - Supprime un client
+## Architecture Overview
 
-### 3. Service Voiture (Port 8089)
-- Microservice de gestion des voitures
-- Utilise OpenFeign pour communiquer avec Service Client
-- Base H2 en mémoire
-- Endpoints:
-  - GET /voitures - Liste toutes les voitures (avec infos client)
-  - GET /voiture/{id} - Récupère une voiture par ID
-  - GET /voitures/client/{clientId} - Liste les voitures d'un client
-  - POST /voiture - Crée une nouvelle voiture
-  - PUT /voiture/{id} - Met à jour une voiture
-  - DELETE /voiture/{id} - Supprime une voiture
+This project demonstrates a production-ready microservices architecture with the following components:
 
-### 4. API Gateway (Port 8888)
-- Point d'entrée unique pour tous les microservices
-- Routage automatique et manuel
-- Load balancing
-- Routes configurées:
-  - /clients/** → SERVICE-CLIENT
-  - /client/** → SERVICE-CLIENT
-  - /voitures/** → SERVICE-VOITURE
-  - /voiture/** → SERVICE-VOITURE
+```
+┌─────────────────┐
+│   API Gateway   │ :8888
+│  (Entry Point)  │
+└────────┬────────┘
+         │
+    ┌────┴─────┐
+    │          │
+┌───▼──────┐ ┌─▼────────────┐
+│ Service  │ │   Service    │
+│ Client   │ │   Voiture    │
+│  :8088   │ │    :8089     │
+└────┬─────┘ └──────┬───────┘
+     │              │
+     └──────┬───────┘
+            │
+     ┌──────▼──────┐
+     │   Eureka    │
+     │   Server    │
+     │    :8761    │
+     └─────────────┘
+```
 
-## Démarrage
+**Key Features:**
+- **Service Discovery**: Automatic service registration and discovery via Eureka
+- **Load Balancing**: Client-side load balancing through Spring Cloud
+- **API Gateway**: Single entry point with intelligent routing
+- **Inter-Service Communication**: Type-safe REST clients using OpenFeign
 
-### 1. Build du projet
+---
+
+## Microservices Components
+
+### 1. Eureka Server (Port: 8761)
+Service registry for automatic service discovery and health monitoring.
+
+**Access Points:**
+- Dashboard: `http://localhost:8761`
+
+**Responsibilities:**
+- Service registration and heartbeat management
+- Service instance tracking
+- Load balancing support
+
+---
+
+### 2. Client Service (Port: 8088)
+Microservice for managing client/customer data.
+
+**Technology:**
+- Spring Boot REST API
+- H2 In-Memory Database
+- Spring Data JPA
+
+**Endpoints:**
+
+| Method | Endpoint          | Description                    |
+|--------|-------------------|--------------------------------|
+| GET    | `/clients`        | Retrieve all clients           |
+| GET    | `/client/{id}`    | Retrieve client by ID          |
+| POST   | `/client`         | Create a new client            |
+| PUT    | `/client/{id}`    | Update an existing client      |
+| DELETE | `/client/{id}`    | Delete a client                |
+
+---
+
+### 3. Voiture Service (Port: 8089)
+Microservice for managing vehicle data with OpenFeign integration.
+
+**Technology:**
+- Spring Boot REST API
+- H2 In-Memory Database
+- OpenFeign for inter-service calls
+
+**Endpoints:**
+
+| Method | Endpoint                    | Description                           |
+|--------|-----------------------------|---------------------------------------|
+| GET    | `/voitures`                 | Retrieve all vehicles (with owners)   |
+| GET    | `/voiture/{id}`             | Retrieve vehicle by ID                |
+| GET    | `/voitures/client/{clientId}` | Retrieve vehicles by client         |
+| POST   | `/voiture`                  | Create a new vehicle                  |
+| PUT    | `/voiture/{id}`             | Update a vehicle                      |
+| DELETE | `/voiture/{id}`             | Delete a vehicle                      |
+
+**OpenFeign Integration:**
+This service demonstrates inter-service communication by fetching client details when retrieving vehicle information.
+
+---
+
+### 4. API Gateway (Port: 8888)
+Centralized entry point providing unified access to all microservices.
+
+**Features:**
+- Automatic route discovery via Eureka
+- Manual route configuration
+- Client-side load balancing
+- Request filtering and transformation
+
+**Route Configuration:**
+
+| Gateway Route     | Target Service      | Backend Endpoint  |
+|-------------------|---------------------|-------------------|
+| `/clients/**`     | SERVICE-CLIENT      | Port 8088         |
+| `/client/**`      | SERVICE-CLIENT      | Port 8088         |
+| `/voitures/**`    | SERVICE-VOITURE     | Port 8089         |
+| `/voiture/**`     | SERVICE-VOITURE     | Port 8089         |
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- Port availability: 8761, 8088, 8089, 8888
+
+### Build the Project
+
 ```bash
 mvn clean install
 ```
 
-### 2. Démarrer les services (dans cet ordre)
+### Start Services (in order)
 
-#### Démarrer Eureka Server
+**Step 1: Start Eureka Server**
 ```bash
 cd eureka-server
 mvn spring-boot:run
 ```
-Attendre que Eureka soit complètement démarré (Dashboard accessible sur http://localhost:8761)
+Wait for Eureka to be fully operational. Verify at: http://localhost:8761
 
-#### Démarrer Service Client
+**Step 2: Start Client Service**
 ```bash
 cd service-client
 mvn spring-boot:run
 ```
 
-#### Démarrer Service Voiture
+**Step 3: Start Voiture Service**
 ```bash
 cd service-voiture
 mvn spring-boot:run
 ```
 
-#### Démarrer API Gateway
+**Step 4: Start API Gateway**
 ```bash
 cd gateway
 mvn spring-boot:run
 ```
 
-## Tests
+**Verification:** Check Eureka Dashboard to ensure all services are registered.
 
-### Via Gateway (Recommandé)
+---
 
-#### Tester Service Client via Gateway
+## API Documentation
+
+### Testing via Gateway (Recommended)
+
+All API calls should go through the Gateway for proper routing and load balancing.
+
+**Client Service Examples:**
+
 ```bash
-# Lister tous les clients
+# List all clients
 curl http://localhost:8888/clients
 
-
-
-# Récupérer un client spécifique
+# Get specific client
 curl http://localhost:8888/client/1
 
+# Create a new client
+curl -X POST http://localhost:8888/client \
+  -H "Content-Type: application/json" \
+  -d '{"nom": "Nouveau Client", "age": 28}'
 
+# Update a client
+curl -X PUT http://localhost:8888/client/1 \
+  -H "Content-Type: application/json" \
+  -d '{"nom": "Client Modifié", "age": 30}'
 
-#### Tester Service Voiture via Gateway
+# Delete a client
+curl -X DELETE http://localhost:8888/client/1
+```
+
+**Voiture Service Examples:**
+
 ```bash
-# Lister toutes les voitures (avec infos client via OpenFeign)
+# List all vehicles (includes client info via OpenFeign)
 curl http://localhost:8888/voitures
 
-# Récupérer une voiture spécifique
+# Get specific vehicle
 curl http://localhost:8888/voiture/1
 
-# Lister les voitures d'un client
+# Get vehicles by client
 curl http://localhost:8888/voitures/client/1
 
+# Create a new vehicle
+curl -X POST http://localhost:8888/voiture \
+  -H "Content-Type: application/json" \
+  -d '{"marque": "BMW", "modele": "X5", "matricule": "ABC123", "clientId": 1}'
+```
 
+---
 
+## Testing Guide
 
+### Sample Data
 
-## Données de test
+The application comes pre-loaded with test data for demonstration.
 
-### Clients (3 clients insérés au démarrage)
+**Clients (3 pre-inserted):**
 1. Ahmed Bennani (30 ans)
 2. Fatima Zahra (25 ans)
 3. Youssef Alami (35 ans)
 
-### Voitures (4 voitures insérées au démarrage)
-1. Toyota Corolla - Client 1 (Ahmed)
-2. Renault Megane - Client 2 (Fatima)
-3. Peugeot 308 - Client 1 (Ahmed)
-4. Mercedes Classe A - Client 3 (Youssef)
+**Voitures (4 pre-inserted):**
+1. Toyota Corolla → Ahmed Bennani
+2. Renault Megane → Fatima Zahra
+3. Peugeot 308 → Ahmed Bennani
+4. Mercedes Classe A → Youssef Alami
 
-## Monitoring
+---
+
+## Monitoring & Management
 
 ### Eureka Dashboard
-http://localhost:8761
+Monitor service health and registration status:
+- URL: http://localhost:8761
 
-### H2 Console - Service Client
-http://localhost:8088/h2-console
-- JDBC URL: jdbc:h2:mem:client-db
-- Username: sa
-- Password: (vide)
+### H2 Database Consoles
 
-### H2 Console - Service Voiture
-http://localhost:8089/h2-console
-- JDBC URL: jdbc:h2:mem:voiture-db
-- Username: sa
-- Password: (vide)
+**Client Service Database:**
+- URL: http://localhost:8088/h2-console
+- JDBC URL: `jdbc:h2:mem:client-db`
+- Username: `sa`
+- Password: *(leave empty)*
 
-### Actuator Endpoints
+**Voiture Service Database:**
+- URL: http://localhost:8089/h2-console
+- JDBC URL: `jdbc:h2:mem:voiture-db`
+- Username: `sa`
+- Password: *(leave empty)*
+
+### Spring Boot Actuator
+
+Health checks and metrics available at:
 - Gateway: http://localhost:8888/actuator
-- Service Client: http://localhost:8088/actuator
-- Service Voiture: http://localhost:8089/actuator
+- Client Service: http://localhost:8088/actuator
+- Voiture Service: http://localhost:8089/actuator
+
+---
 
 ## Screenshots
 
-<img width="1440" height="900" alt="client_id_1" src="https://github.com/user-attachments/assets/c9798a35-0987-4657-9064-8852c1272c97" />
+### Eureka Server Dashboard
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/eureke_test.png" alt="Eureka Dashboard" width="800"/>
 
-## Technologies utilisées
+### Client List API Response
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_client.png" alt="Liste des clients" width="800"/>
 
-- Spring Boot 3.2.0
-- Spring Cloud 2023.0.0
-- Spring Cloud Netflix Eureka
-- Spring Cloud Gateway
-- Spring Cloud OpenFeign
-- Spring Data JPA
-- H2 Database
-- Lombok
-- Maven
+### Single Client API Response
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/client_id_1.png" alt="Client avec ID=1" width="800"/>
 
-## Démonstration de OpenFeign
+### Vehicle List with Client Details (OpenFeign)
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_voitures.png" alt="Liste des voitures" width="800"/>
 
-OpenFeign est démontré dans le Service Voiture qui appelle le Service Client pour récupérer les informations du propriétaire d'une voiture:
+---
+
+## Technology Stack
+
+| Technology                    | Version  | Purpose                          |
+|-------------------------------|----------|----------------------------------|
+| Spring Boot                   | 3.2.0    | Application framework            |
+| Spring Cloud                  | 2023.0.0 | Microservices infrastructure     |
+| Spring Cloud Netflix Eureka   | -        | Service discovery                |
+| Spring Cloud Gateway          | -        | API Gateway                      |
+| Spring Cloud OpenFeign        | -        | Declarative REST client          |
+| Spring Data JPA               | -        | Data persistence                 |
+| H2 Database                   | -        | In-memory database               |
+| Lombok                        | -        | Code generation                  |
+| Maven                         | -        | Build tool                       |
+
+---
+
+## OpenFeign Demonstration
+
+OpenFeign enables declarative REST client creation, simplifying inter-service communication.
+
+**Example Implementation:**
 
 ```java
 @FeignClient(name = "SERVICE-CLIENT")
@@ -170,4 +318,32 @@ public interface ClientRestClient {
 }
 ```
 
-Lorsque vous appelez `/voitures`, le Service Voiture utilise automatiquement OpenFeign pour enrichir chaque voiture avec les données de son client, en appelant le Service Client via Eureka (découverte de service) et le load balancer.
+**How It Works:**
+
+1. When you call `/voitures`, the Voiture Service retrieves vehicle records
+2. For each vehicle, it uses the OpenFeign client to fetch the owner's details from Client Service
+3. Eureka provides service discovery - no hardcoded URLs needed
+4. Spring Cloud handles load balancing automatically
+5. The response includes enriched data with complete client information
+
+This demonstrates the power of microservices: each service maintains its own data while seamlessly collaborating through well-defined APIs.
+
+---
+
+## Project Structure
+
+```
+Spring_Cloud_Eureka_Gateway_OpenFeign/
+├── eureka-server/          # Service registry
+├── gateway/                # API Gateway
+├── service-client/         # Client management service
+├── service-voiture/        # Vehicle management service
+├── Screen/                 # Screenshots
+└── pom.xml                # Parent POM
+```
+
+---
+
+## License
+
+This project is part of Spring Cloud learning exercises.
