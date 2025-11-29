@@ -145,16 +145,16 @@ http://localhost:8089/h2-console
 ## Screenshots
 
 ### Eureka Server Dashboard
-![Eureka Dashboard](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/eureke_test.png)
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/eureke_test.png" alt="Eureka Dashboard" width="800"/>
 
 ### Liste des Clients
-![Liste des clients](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_client.png)
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_client.png" alt="Liste des clients" width="800"/>
 
 ### Détails d'un Client
-![Client avec ID=1](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/client_id_1.png)
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/client_id_1.png" alt="Client avec ID=1" width="800"/>
 
 ### Liste des Voitures
-![Liste des voitures](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_voitures.png)
+<img src="https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_voitures.png" alt="Liste des voitures" width="800"/>
 
 ## Technologies utilisées
 
