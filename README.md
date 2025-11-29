@@ -148,7 +148,7 @@ http://localhost:8089/h2-console
 ![Eureka Dashboard](Screen/eureke_test.png)
 
 ### Liste des Clients
-![Liste des clients](Screen/Liste_client.png)
+![Liste des clients](Screen/Liste.client.png)
 
 ### Détails d'un Client
 ![Client avec ID=1](Screen/client_id=1.png)
