@@ -145,16 +145,16 @@ http://localhost:8089/h2-console
 ## Screenshots
 
 ### Eureka Server Dashboard
-![Eureka Dashboard](Screen/eureke_test.png)
+![Eureka Dashboard](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/eureke_test.png)
 
 ### Liste des Clients
-![Liste des clients](Screen/Liste_client.png)
+![Liste des clients](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_client.png)
 
 ### Détails d'un Client
-![Client avec ID=1](Screen/client_id_1.png)
+![Client avec ID=1](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/client_id_1.png)
 
 ### Liste des Voitures
-![Liste des voitures](Screen/Liste_voitures.png)
+![Liste des voitures](https://raw.githubusercontent.com/Boussyf0/Spring.Cloud_Eureka_Gateway_OpenFeign/main/Screen/Liste_voitures.png)
 
 ## Technologies utilisées
 
