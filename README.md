@@ -151,7 +151,7 @@ http://localhost:8089/h2-console
 ![Liste des clients](Screen/Liste_client.png)
 
 ### Détails d'un Client
-![Client avec ID=1](Screen/client_id=1.png)
+![Client avec ID=1](Screen/client_id_1.png)
 
 ### Liste des Voitures
 ![Liste des voitures](Screen/Liste_voitures.png)
